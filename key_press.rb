@@ -16,14 +16,14 @@ class KeyPress
   class << self
     attr_accessor :collection
 
-    def catch
-      collection << new
+    def catch(event)
+      collection << new(event)
 
       store_result
     end
 
     def store_result
-      File.open(STORE_FILE_PATH, 'w') do |f|
+      File.open(STORE_FILE_PATH, 'w+') do |f|
         f.write(average_amount)
       end
     end
@@ -37,8 +37,7 @@ class KeyPress
     end
   end
 
-  def initialize
-    @created_at = Time.now
+  def initialize(event)
+    @created_at = Time.at(event[:time][:tv_sec])
   end
 end
-
