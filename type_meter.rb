@@ -2,10 +2,9 @@ require 'linux_input'
 
 class TypeMeter
   STOP_CHAR = "\e"
-  KEYBOARD_FILE = '/dev/input/event14'
 
   def initialize
-    @keyboard_file = File.open(KEYBOARD_FILE)
+    @keyboard_file = File.open(keyboard_device)
     @watch = true
   end
 
@@ -29,5 +28,13 @@ class TypeMeter
     return unless event[:type] == 1 && event[:value] == 1
 
     KeyPress.catch(event)
+  end
+
+  def keyboard_device
+    "/dev/input/#{keyboard_event}"
+  end
+
+  def keyboard_event
+    `grep -E 'Handlers|EV=' /proc/bus/input/devices | grep -B1 'EV=120013' | grep -Eo 'event[0-9]+'`.strip
   end
 end
